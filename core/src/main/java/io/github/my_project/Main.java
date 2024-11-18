@@ -17,6 +17,10 @@ public class Main extends ApplicationAdapter {
     // Skapa en ShapeRenderer.
     private ShapeRenderer shapeRenderer;
 
+    // Variabler till cirkelns position.
+    private float cirkelX;
+    private float cirkelY;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -24,6 +28,10 @@ public class Main extends ApplicationAdapter {
 
         // Initiera ShapeRenderer.
         shapeRenderer = new ShapeRenderer();
+
+        // Cirkeln börjar på 200, 400
+        cirkelX = 200;
+        cirkelY = 400;
     }
 
     @Override
@@ -34,6 +42,12 @@ public class Main extends ApplicationAdapter {
         batch.draw(image, 140, 210);
         batch.end();
 
+        // Lägg till hastighet + position
+        // så att cirkeln åker.
+        // (Multiplicera med deltaTime så att det är rätt hastighet, oavsett FPS)
+        cirkelX += 1.0f * Gdx.graphics.getDeltaTime();
+        cirkelY += 0.0f * Gdx.graphics.getDeltaTime();
+
         // Rita en blå rektangel med ShapeRenderer.
         shapeRenderer.begin(ShapeType.Filled);
         shapeRenderer.setColor(0, 0, 1, 1);
@@ -41,6 +55,10 @@ public class Main extends ApplicationAdapter {
         shapeRenderer.end();
 
         // Övning: Kan du rita en gul cirkel med ShapeRenderer?
+        shapeRenderer.begin(ShapeType.Filled);
+        shapeRenderer.setColor(1, 1, 0, 1);
+        shapeRenderer.circle(cirkelX, cirkelY, 25);
+        shapeRenderer.end();
     }
 
     @Override
