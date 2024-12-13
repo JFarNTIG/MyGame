@@ -20,7 +20,7 @@ public class TitleScreen extends ScreenAdapter {
             @Override
             public boolean keyDown(int keyCode) {
                 if (keyCode == Input.Keys.SPACE) {
-                    game.setScreen(new GameScreen(game));
+                    game.setScreen(new DropScreen(game));
                 }
                 return true;
             }
@@ -31,10 +31,14 @@ public class TitleScreen extends ScreenAdapter {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, .25f, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        game.viewport.apply();
+        game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
+
         game.batch.begin();
-        game.font.draw(game.batch, "Title Screen!", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .75f);
-        game.font.draw(game.batch, "Click the circle to win.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .5f);
-        game.font.draw(game.batch, "Press space to play.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .25f);
+        game.font.draw(game.batch, "Title Screen!", 2.0f, 3.0f);
+        game.font.draw(game.batch, "Catch the water drops.", 2.0f, 2.8f);
+        game.font.draw(game.batch, "Press space to play.", 2.0f, 2.6f);
         game.batch.end();
     }
 
