@@ -23,11 +23,13 @@ public class DropScreen extends ScreenAdapter {
     Texture backgroundTexture;
     Texture bucketTexture;
     Texture dropTexture;
+    Texture drop2Texture;
+    Texture coinTexture;
     Sound dropSound;
     Music music;
     Sprite bucketSprite;
     Vector2 touchPos;
-    Array<Sprite> dropSprites;
+    Array<Drop> droplets;
     float dropTimer;
     Rectangle bucketRectangle;
     Rectangle dropRectangle;
@@ -38,6 +40,8 @@ public class DropScreen extends ScreenAdapter {
         backgroundTexture = new Texture("background.png");
         bucketTexture = new Texture("bucket.png");
         dropTexture = new Texture("drop.png");
+        drop2Texture = new Texture("drop2.png");
+        coinTexture = new Texture("coin.png");
 
         dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
@@ -45,7 +49,7 @@ public class DropScreen extends ScreenAdapter {
         bucketSprite = new Sprite(bucketTexture);
         bucketSprite.setSize(1, 1);
         touchPos = new Vector2();
-        dropSprites = new Array<>();
+        droplets = new Array<>();
         bucketRectangle = new Rectangle();
         dropRectangle = new Rectangle();
 
@@ -103,20 +107,23 @@ public class DropScreen extends ScreenAdapter {
         float delta = Gdx.graphics.getDeltaTime();
         bucketRectangle.set(bucketSprite.getX(), bucketSprite.getY(), bucketWidth, bucketHeight);
 
-        for (int i = dropSprites.size - 1; i >= 0; i--) {
-            Sprite dropSprite = dropSprites.get(i);
+        for (int i = droplets.size - 1; i >= 0; i--) {
+            Drop drop = droplets.get(i);
+
+            Sprite dropSprite = drop.getSprite();
             float dropWidth = dropSprite.getWidth();
             float dropHeight = dropSprite.getHeight();
 
-            dropSprite.translateY(-2f * delta);
+            float speed = drop.getSpeed();
+            dropSprite.translateY(speed * -2f * delta);
 
             dropRectangle.set(dropSprite.getX(), dropSprite.getY(), dropWidth, dropHeight);
 
-            if (dropSprite.getY() < -dropHeight) dropSprites.removeIndex(i);
+            if (dropSprite.getY() < -dropHeight) droplets.removeIndex(i);
             else if (bucketRectangle.overlaps(dropRectangle)) {
-                dropSprites.removeIndex(i);
+                droplets.removeIndex(i);
                 dropSound.play();
-                score += 1;
+                score += drop.getPoints();
             }
         }
 
@@ -140,7 +147,8 @@ public class DropScreen extends ScreenAdapter {
         game.batch.draw(backgroundTexture, 0, 0, worldWidth, worldHeight);
         bucketSprite.draw(game.batch);
 
-        for (Sprite dropSprite : dropSprites) {
+        for (Drop drop : droplets) {
+            Sprite dropSprite = drop.getSprite();
             dropSprite.draw(game.batch);
         }
 
@@ -155,10 +163,12 @@ public class DropScreen extends ScreenAdapter {
         float worldWidth = game.viewport.getWorldWidth();
         float worldHeight = game.viewport.getWorldHeight();
 
-        Sprite dropSprite = new Sprite(dropTexture);
+        Sprite dropSprite = new Sprite(drop2Texture);
         dropSprite.setSize(dropWidth, dropHeight);
         dropSprite.setX(MathUtils.random(0f, worldWidth - dropWidth));
         dropSprite.setY(worldHeight);
-        dropSprites.add(dropSprite);
+
+        Drop newDrop = new Drop(2.0f, 2, dropSprite);
+        droplets.add(newDrop);
     }
 }
